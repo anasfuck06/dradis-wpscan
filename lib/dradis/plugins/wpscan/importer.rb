@@ -14,8 +14,8 @@ module Dradis::Plugins::Wpscan
 
       # Do a sanity check to confirm the user uploaded the right file
       # format.
-      p data["banner"]["description"]
-      p data["banner"]["description"].nil?
+      logger.info {  data["banner"]["description"] }
+      logger.info { data["banner"]["description"].nil? }
       unless data["banner"]["description"] == "WordPress Security Scanner by the WPScan Team"
         logger.error "ERROR: no 'banner->description' field present in the provided "\
                      "JSON data. Are you sure you uploaded a WPScan JSON output file?"
