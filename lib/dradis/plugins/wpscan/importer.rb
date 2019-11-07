@@ -12,11 +12,11 @@ module Dradis::Plugins::Wpscan
       data = MultiJson.decode(file_content)
       logger.info { 'Done.' }
 
-      # FIXME: do a sanity check to confirm the user uploaded the right file
+      # Do a sanity check to confirm the user uploaded the right file
       # format.
-      unless data.key?("scan_info")
-        logger.error "ERROR: no 'scan_info' field present in the provided "\
-                     "data. Are you sure you uploaded a wpscan file?"
+      unless data["banner"]["description"] == "WordPress Security Scanner by the WPScan Team"
+        logger.error "ERROR: no 'banner->description' field present in the provided "\
+                     "JSON data. Are you sure you uploaded a WPScan JSON output file?"
         exit(-1)
       end
 

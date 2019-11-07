@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name        = 'dradis-wpscan'
   spec.version     = version
   spec.summary     = 'WPScan add-on for the Dradis Framework.'
-  spec.description = 'This add-on allows you to upload and parse output produced from the WPScan security scanner into Dradis.'
+  spec.description = 'This add-on allows you to upload and parse output produced from the WPScan WordPress security scanner into Dradis.'
 
   spec.license     = 'GPL-2'
 
