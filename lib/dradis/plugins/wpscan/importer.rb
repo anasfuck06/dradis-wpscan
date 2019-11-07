@@ -16,7 +16,7 @@ module Dradis::Plugins::Wpscan
       # format.
       unless data.key?("scan_info")
         logger.error "ERROR: no 'scan_info' field present in the provided "\
-                     "data. Are you sure you uploaded a Brakeman file?"
+                     "data. Are you sure you uploaded a wpscan file?"
         exit(-1)
       end
 
