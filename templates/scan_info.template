@@ -6,6 +6,18 @@ WPScan Scan Information
 %scan_info.target_url%
 
 
+#[WordpressVersion]#
+%scan_info.wordpress_version%
+
+
+#[Plugins]#
+%scan_info.plugins_string%
+
+
+#[Themes]#
+%scan_info.themes_string%
+
+
 #[WPScanVersion]#
 %scan_info.wpscan_version%
 
@@ -14,5 +26,5 @@ WPScan Scan Information
 %scan_info.start_time%
 
 
-#[TotalTime]#
+#[TotalScanTime]#
 %scan_info.elapsed%

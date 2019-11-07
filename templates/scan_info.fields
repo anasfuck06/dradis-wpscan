@@ -2,3 +2,6 @@ scan_info.target_url
 scan_info.wpscan_version
 scan_info.start_time
 scan_info.elapsed
+scan_info.wordpress_version
+scan_info.plugins_string
+scan.info.themes_string

@@ -13,8 +13,6 @@ module Dradis
           # is common across all fields for a given template (and meaningless).
           type, name, attribute = field.split('.')
 
-          p type, name, attribute
-
           @data.key?(name) ? @data[name] : 'n/a'
         end
       end

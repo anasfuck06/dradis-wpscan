@@ -21,9 +21,12 @@ module Dradis::Plugins::Wpscan
       end
 
       # Parse scan info data and make more human readable.
-      data["wpscan_version"] = data["banner"]["version"]
-      data["start_time"]     = DateTime.strptime(data["start_time"].to_s,'%s')
-      data["elapsed"]        = "#{data["elapsed"]} seconds"
+      data['wpscan_version']    = data['banner']['version']
+      data['start_time']        = DateTime.strptime(data['start_time'].to_s,'%s')
+      data['elapsed']           = "#{data["elapsed"]} seconds"
+      data['wordpress_version'] = data['version']['number']  if data['version']
+      data['plugins_string']    = data['plugins'].keys.join("\n") if data['plugins']
+      data['themes_string']     = data['themes'].keys.join("\n")  if data['themes']
 
       scan_info = template_service.process_template(template: 'scan_info', data: data)
       content_service.create_note text: scan_info
@@ -33,59 +36,77 @@ module Dradis::Plugins::Wpscan
       vulnerabilities = []
 
       # WordPress Vulnerabilities
-      if data["version"] && data["version"]["status"] == "insecure"
-        data["version"]["vulnerabilities"].each do |vulnerability_data|
-          add_vulnerability( vulnerabilities, vulnerability_data )
+      if data['version'] && data['version']['status'] == 'insecure'
+        data['version']['vulnerabilities'].each do |vulnerability_data|
+          vulnerabilities << add_vulnerability( vulnerability_data )
         end
       end
 
       # Plugin Vulnerabilities
-      if data["plugins"]
-        data["plugins"].each do |key, plugin|
+      if data['plugins']
+        data['plugins'].each do |key, plugin|
           if plugin['vulnerabilities']
             plugin['vulnerabilities'].each do |vulnerability_data|
-              add_vulnerability( vulnerabilities, vulnerability_data )
+              vulnerabilities << add_vulnerability( vulnerability_data )
             end
           end
         end
       end
 
       # Theme Vulnerabilities
-      if data["themes"]
-        data["themes"].each do |key, theme|
+      if data['themes']
+        data['themes'].each do |key, theme|
           if theme['vulnerabilities']
             theme['vulnerabilities'].each do |vulnerability_data|
-              add_vulnerability( vulnerabilities, vulnerability_data )
+              vulnerabilities << add_vulnerability( vulnerability_data )
             end
           end
         end
       end
 
-      # if data["config_backups"]
-      #   vulnerability = {}
-      #   vulnerability["title"] = "WordPress Configuration Backup Found"
-      #   vulnerability["url"]   = data["config_backups"][0]
-
-      #   vulnerabilities << vulnerability
-      # end
-
+      # Add vulnerabilities to Dradis
       vulnerabilities.each do |vulnerability|
-        vulnerability = template_service.process_template(template: 'vulnerability', data: vulnerability)
-        content_service.create_note text: vulnerability
+        logger.info { "Adding vulnerability: #{vulnerability['title']}" }
+
+        vulnerability_template = template_service.process_template(template: 'vulnerability', data: vulnerability)
+        content_service.create_issue(text: vulnerability_template, id: vulnerability['wpvulndb_id'])
       end
+
+
+      # Add risky interesting findings to vulnerabilities
+      # Note: No API key needed.
+      vulnerabilities = []
+
+      if data["config_backups"]
+        vulnerability = {}
+        vulnerability["title"] = "WordPress Configuration Backup Found"
+        vulnerability["url"]   = data["config_backups"].keys[0]
+
+        vulnerabilities << vulnerability
+      end
+
+      # Add WordPress configuration vulnerabilities to Dradis
+      vulnerabilities.each do |vulnerability|
+        logger.info { "Adding vulnerability: #{vulnerability['title']}" }
+
+        vulnerability_template = template_service.process_template(template: 'vulnerability', data: vulnerability)
+        content_service.create_issue(text: vulnerability_template, id: "wpscan_#{rand(999999)}")
+      end
+
     end
 
-    def add_vulnerability( vulnerabilities, vulnerability_data )
-      wpvulndb_url = "https://wpvulndb.com/vulnerabilities/"
+    def add_vulnerability( vulnerability_data )
+      wpvulndb_url = 'https://wpvulndb.com/vulnerabilities/'
 
       vulnerability = {}
-      vulnerability["title"]    = vulnerability_data["title"]
-      vulnerability["fixed_in"] = vulnerability_data["fixed_in"] if vulnerability_data["fixed_in"]
-      vulnerability["cve"]      = "CVE-" + vulnerability_data["references"]["cve"][0] if vulnerability_data["references"]["cve"]
-      vulnerability["url"]      = vulnerability_data["references"]["url"].join("\n") if vulnerability_data["references"]["url"]
-      vulnerability["wpvulndb"] = wpvulndb_url + vulnerability_data["references"]["wpvulndb"][0]
+      vulnerability['title']        = vulnerability_data['title']
+      vulnerability['fixed_in']     = vulnerability_data['fixed_in'] if vulnerability_data['fixed_in']
+      vulnerability['cve']          = 'CVE-' + vulnerability_data['references']['cve'][0] if vulnerability_data['references']['cve']
+      vulnerability['url']          = vulnerability_data['references']['url'].join("\n") if vulnerability_data['references']['url']
+      vulnerability['wpvulndb_url'] = wpvulndb_url + vulnerability_data['references']['wpvulndb'][0]
+      vulnerability['wpvulndb_id']  = vulnerability_data['references']['wpvulndb'][0]
 
-      vulnerabilities << vulnerability
+      vulnerability
     end
   end
 end
