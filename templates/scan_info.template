@@ -1,0 +1,18 @@
+#[Title]#
+WPScan Scan Information
+
+
+#[TargetURL]#
+%scan_info.target_url%
+
+
+#[WPScanVersion]#
+%scan_info.wpscan_version%
+
+
+#[StartTime]#
+%scan_info.start_time%
+
+
+#[TotalTime]#
+%scan_info.elapsed%

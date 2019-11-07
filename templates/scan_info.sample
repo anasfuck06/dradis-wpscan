@@ -1,0 +1,30 @@
+{
+  "banner": {
+    "description": "WordPress Security Scanner by the WPScan Team",
+    "version": "3.7.4",
+    "authors": [
+      "@_WPScan_",
+      "@ethicalhack3r",
+      "@erwan_lr",
+      "@_FireFart_"
+    ],
+    "sponsor": "WPScan.io - Online WordPress Vulnerability Scanner"
+  },
+  "start_time": 1573126188,
+  "start_memory": 49848320,
+  "target_url": "http://www.lagardelanguages.com/",
+  "effective_url": "http://www.lagardelanguages.com/",
+  "vuln_api": {
+    "error": "No WPVulnDB API Token given, as a result vulnerability data has not been output.\nYou can get a free API token with 50 daily requests by registering at https://wpvulndb.com/users/sign_up."
+  },
+  "stop_time": 1573126193,
+  "elapsed": 5,
+  "requests_done": 23,
+  "cached_requests": 45,
+  "data_sent": 6850,
+  "data_sent_humanised": "6.689 KB",
+  "data_received": 24157,
+  "data_received_humanised": "23.591 KB",
+  "used_memory": 215461888,
+  "used_memory_humanised": "205.48 MB"
+}
