@@ -18,6 +18,10 @@ WPScan Scan Information
 %scan_info.themes_string%
 
 
+#[Themes]#
+%scan_info.users%
+
+
 #[WPScanVersion]#
 %scan_info.wpscan_version%
 
